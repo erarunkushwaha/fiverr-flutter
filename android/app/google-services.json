@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "359473527816",
+    "project_id": "fiverr-flutter-1bf91",
+    "storage_bucket": "fiverr-flutter-1bf91.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359473527816:android:9da710d3cd8709360e65bd",
+        "android_client_info": {
+          "package_name": "arun.project.fiverr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "359473527816-s3b0trkp8gun0mnequksd7bsvdc0iluq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6yKt7NuNMOSDkzIy4eUztNYT5uAnrVfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "359473527816-s3b0trkp8gun0mnequksd7bsvdc0iluq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
