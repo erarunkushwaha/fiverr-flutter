@@ -1,6 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:fiverr/helpers/global_method.dart';
 import 'package:fiverr/screens/forget_password.dart';
+import 'package:fiverr/screens/signup_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,11 +26,15 @@ class _LoginScreenState extends State<LoginScreen>
   final TextEditingController _passwordController =
       TextEditingController(text: "");
   bool _obSecure = false;
+  // ignore: unused_field
   bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
+    _animationController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -80,11 +88,17 @@ class _LoginScreenState extends State<LoginScreen>
           email: _emailController.text.trim().toLowerCase(),
           password: _passwordController.text.trim(),
         );
+        Navigator.canPop(context) ? Navigator.pop(context) : null;
       } catch (e) {
-        //
+        setState(() {
+          _isLoading = false;
+          GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
+        });
       }
-      Navigator.canPop(context) ? Navigator.pop(context) : null;
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -183,15 +197,17 @@ class _LoginScreenState extends State<LoginScreen>
                     child: const Text(
                       "Forget password",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontStyle: FontStyle.italic),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 17,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: submitFormOnlogin,
                   color: Colors.green,
                   elevation: 8,
                   shape: RoundedRectangleBorder(
@@ -213,6 +229,35 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 40),
+          Center(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: "Do not have an account ?",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16),
+                  ),
+                  const TextSpan(text: "  "),
+                  TextSpan(
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUp())),
+                    text: "SignUp",
+                    style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
