@@ -1,6 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fiverr/helpers/global_method.dart';
 import 'package:fiverr/screens/login_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -35,14 +40,18 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   bool _obSecure = false;
   // ignore: unused_field
   bool _isLoading = false;
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? imageUrl;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
     _animationController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _phoneNumberController.dispose();
+    _adressController.dispose();
     _passFocusNode.dispose();
+    _emailFocusNode.dispose();
     super.dispose();
   }
 
@@ -69,21 +78,40 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   void submitFormOnSignUp() async {
     final isValid = _signupFromKey.currentState!.validate();
     if (isValid) {
+      if (imageFile == null) {
+        GlobalMethod.showErrorDialog(
+            error: "Please select an image", ctx: context);
+      }
       setState(() {
         _isLoading = true;
       });
-      // try {
-      //   await _auth.signInWithEmailAndPassword(
-      //     email: _emailController.text.trim().toLowerCase(),
-      //     password: _passwordController.text.trim(),
-      //   );
-      //   Navigator.canPop(context) ? Navigator.pop(context) : null;
-      // } catch (e) {
-      //   setState(() {
-      //     _isLoading = false;
-      //     GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
-      //   });
-      // }
+    }
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim().toLowerCase(),
+        password: _passwordController.text.trim(),
+      );
+      final User? user = _auth.currentUser;
+      final uid = user!.uid;
+      final ref =
+          FirebaseStorage.instance.ref().child("userImages").child("$uid.jpg");
+      await ref.putFile(imageFile!);
+      imageUrl = await ref.getDownloadURL();
+      FirebaseFirestore.instance.collection('users').doc(uid).set({
+        "id": uid,
+        "name": _fullNameController.text.trim(),
+        "email": _emailController.text.trim(),
+        "address": _adressController.text.trim(),
+        "phoneNo": _phoneNumberController.text.trim(),
+        "userImage": imageUrl,
+        "createdAt": Timestamp.now(),
+      });
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
     }
     setState(() {
       _isLoading = false;
@@ -395,15 +423,17 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 25),
                       _isLoading
-                          ? Center(
-                              child: Container(
+                          ? const Center(
+                              child: SizedBox(
                                 width: 70,
                                 height: 70,
-                                child: const CircularProgressIndicator(),
+                                child: CircularProgressIndicator(),
                               ),
                             )
                           : MaterialButton(
-                              onPressed: submitFormOnSignUp,
+                              onPressed: () {
+                                submitFormOnSignUp();
+                              },
                               color: Colors.green,
                               elevation: 8,
                               shape: RoundedRectangleBorder(
