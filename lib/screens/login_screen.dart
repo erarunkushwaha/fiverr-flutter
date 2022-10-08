@@ -172,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen>
                       child: Icon(
                         _obSecure ? Icons.visibility : Icons.visibility_off,
                         color: Colors.white,
+                        size: 20,
                       ),
                     ),
                     hintText: "Password",
