@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:fiverr/screens/login_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -86,6 +90,31 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     });
   }
 
+  void _getImageFromCamera() async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    _croppedImage(pickedFile!.path);
+    Navigator.pop(context);
+  }
+
+  void _getImageFromGallery() async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    _croppedImage(pickedFile!.path);
+
+    Navigator.pop(context);
+  }
+
+  void _croppedImage(filePath) async {
+    CroppedFile? croppedImage = await ImageCropper()
+        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    if (croppedImage != null) {
+      setState(() {
+        imageFile = File(croppedImage.path);
+      });
+    }
+  }
+
   void _showImageDialog() {
     showDialog(
         context: context,
@@ -101,7 +130,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
               mainAxisSize: MainAxisSize.min,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _getImageFromCamera();
+                  },
                   child: Row(
                     children: const [
                       Padding(
@@ -122,7 +153,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 5),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _getImageFromGallery();
+                  },
                   child: Row(
                     children: const [
                       Padding(
