@@ -1,4 +1,4 @@
-import 'package:fiverr/screens/login_screen.dart';
+import 'package:fiverr/screens/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: Colors.black,
               primarySwatch: Colors.green,
             ),
-            home: const LoginScreen(),
+            home: const UserState(),
           );
         });
   }
