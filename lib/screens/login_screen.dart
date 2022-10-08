@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fiverr/helpers/global_method.dart';
 import 'package:fiverr/screens/forget_password.dart';
+import 'package:fiverr/screens/jobs_screen.dart';
 import 'package:fiverr/screens/signup_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,8 @@ class _LoginScreenState extends State<LoginScreen>
           password: _passwordController.text.trim(),
         );
         Navigator.canPop(context) ? Navigator.pop(context) : null;
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const JobsScreen()));
       } catch (e) {
         setState(() {
           _isLoading = false;
