@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fiverr/helpers/persistent.dart';
 import 'package:flutter/material.dart';
 import 'package:fiverr/widgets/bottom_nav_bar.dart';
@@ -18,8 +19,10 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
   final TextEditingController _jobDescriptionController =
       TextEditingController(text: "");
   final TextEditingController _jobDeadlineController =
-      TextEditingController(text: "");
+      TextEditingController(text: "Job Deadline Date ");
   bool isLoading = false;
+  DateTime? picked;
+  Timestamp? jobsDeadlineTimeStamp;
 
   Widget textformField({
     required String valueKey,
@@ -147,6 +150,23 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
         });
   }
 
+  _pickedDateDialog() async {
+    picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now().subtract(const Duration(days: 0)),
+        lastDate: DateTime(2200));
+
+    if (picked != null) {
+      setState(() {
+        _jobDeadlineController.text =
+            '${picked!.year} - ${picked!.month} - ${picked!.day} ';
+        jobsDeadlineTimeStamp = Timestamp.fromMicrosecondsSinceEpoch(
+            picked!.microsecondsSinceEpoch);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -207,14 +227,14 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
                                 _showTaskCategoryDialog();
                               },
                               maxLength: 100),
-                          textTitle(label: "Jobs Title :"),
+                          textTitle(label: "Job Title :"),
                           textformField(
                               valueKey: 'jobsTitle',
                               controller: _jobTitleController,
                               enabled: true,
                               fct: () {},
                               maxLength: 100),
-                          textTitle(label: "Jobs Description :"),
+                          textTitle(label: "Job Description :"),
                           textformField(
                               valueKey: 'jobsDescription',
                               controller: _jobDescriptionController,
@@ -223,10 +243,12 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
                               maxLength: 300),
                           textTitle(label: "Jobs Deadline Date :"),
                           textformField(
-                              valueKey: 'JobsDeadline',
+                              valueKey: 'JobDeadline',
                               controller: _jobDeadlineController,
-                              enabled: true,
-                              fct: () {},
+                              enabled: false,
+                              fct: () {
+                                _pickedDateDialog();
+                              },
                               maxLength: 100),
                         ],
                       ),
