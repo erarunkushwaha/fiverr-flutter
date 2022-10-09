@@ -1,3 +1,4 @@
+import 'package:fiverr/helpers/persistent.dart';
 import 'package:flutter/material.dart';
 import 'package:fiverr/widgets/bottom_nav_bar.dart';
 
@@ -78,6 +79,74 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
     );
   }
 
+  _showTaskCategoryDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.black54,
+            title: const Text(
+              "Job Category",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: Persistent.jobCategoryList.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        _jobCategoryController.text ==
+                            Persistent.jobCategoryList[index];
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.arrow_right_alt_outlined,
+                          color: Colors.green,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            Persistent.jobCategoryList[index],
+                            style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                                overflow: TextOverflow.fade),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -95,23 +164,6 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         bottomNavigationBar: BottomNavigationBarForApp(indexNum: 2),
-        appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.green[200]!,
-                  Colors.greenAccent[400]!,
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
-              ),
-            ),
-          ),
-          title: const Text("Upload Jobs Now"),
-          centerTitle: true,
-        ),
         body: Center(
             child: Padding(
           padding: const EdgeInsets.all(8),
@@ -150,8 +202,10 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
                           textformField(
                               valueKey: 'jobsCategory',
                               controller: _jobCategoryController,
-                              enabled: true,
-                              fct: () {},
+                              enabled: false,
+                              fct: () {
+                                _showTaskCategoryDialog();
+                              },
                               maxLength: 100),
                           textTitle(label: "Jobs Title :"),
                           textformField(
