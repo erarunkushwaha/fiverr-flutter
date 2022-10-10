@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fiverr/helpers/global_method.dart';
+import 'package:fiverr/helpers/global_variables.dart';
 import 'package:fiverr/helpers/persistent.dart';
 import 'package:flutter/material.dart';
 import 'package:fiverr/widgets/bottom_nav_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uuid/uuid.dart';
 
 class UploadJobsScreen extends StatefulWidget {
   const UploadJobsScreen({super.key});
@@ -13,16 +18,26 @@ class UploadJobsScreen extends StatefulWidget {
 class _UploadJobsScreenState extends State<UploadJobsScreen> {
   final _uploadJobsFromKey = GlobalKey<FormState>();
   final TextEditingController _jobCategoryController =
-      TextEditingController(text: "Select Job Category");
+      TextEditingController(text: "Choose Category");
   final TextEditingController _jobTitleController =
       TextEditingController(text: "");
   final TextEditingController _jobDescriptionController =
       TextEditingController(text: "");
   final TextEditingController _jobDeadlineController =
-      TextEditingController(text: "Job Deadline Date ");
+      TextEditingController(text: "Job Deadline Date");
   bool isLoading = false;
   DateTime? picked;
   Timestamp? jobsDeadlineTimeStamp;
+  Uuid? uuid = const Uuid();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _jobCategoryController.dispose();
+    _jobTitleController.dispose();
+    _jobDescriptionController.dispose();
+    _jobDeadlineController.dispose();
+  }
 
   Widget textformField({
     required String valueKey,
@@ -82,7 +97,14 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
     );
   }
 
-  _showTaskCategoryDialog() {
+  void _selectCategory(index) {
+    setState(() {
+      _jobCategoryController.text = Persistent.jobCategoryList[index];
+    });
+    Navigator.canPop(context) ? Navigator.pop(context) : null;
+  }
+
+  void _showTaskCategoryDialog() {
     showDialog(
         context: context,
         builder: (context) {
@@ -103,13 +125,7 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
                 itemCount: Persistent.jobCategoryList.length,
                 itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _jobCategoryController.text ==
-                            Persistent.jobCategoryList[index];
-                      });
-                      Navigator.pop(context);
-                    },
+                    onTap: () => _selectCategory(index),
                     child: Row(
                       children: [
                         const Icon(
@@ -164,6 +180,71 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
         jobsDeadlineTimeStamp = Timestamp.fromMicrosecondsSinceEpoch(
             picked!.microsecondsSinceEpoch);
       });
+    }
+  }
+
+  void _uploadTask() async {
+    final jobId = uuid!.v4();
+
+    User? user = FirebaseAuth.instance.currentUser;
+
+    final uid = user!.uid;
+
+    final isValid = _uploadJobsFromKey.currentState!.validate();
+
+    if (isValid) {
+      if (_jobDeadlineController.text == "Choose job Deadline date" ||
+          _jobDeadlineController.text == "Choose job category") {
+        GlobalMethod.showErrorDialog(
+            error: "Please Pick Everything", ctx: context);
+        return;
+      }
+
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        await FirebaseFirestore.instance.collection("jobs").doc(jobId).set({
+          "jobId": jobId,
+          "uploadedBy": uid,
+          'email': user.email,
+          'jobTitle': _jobTitleController.text,
+          'jobDescription': _jobDescriptionController.text,
+          'deadLineDate': _jobDeadlineController.text,
+          'deadlineDateTimeStamp': jobsDeadlineTimeStamp,
+          'jobCategory': _jobCategoryController.text,
+          'jobComments': [],
+          'recruitment': true,
+          'createdAt': Timestamp.now(),
+          'name': name,
+          'userImage': userImage,
+          'location': location,
+          'applicants': 0,
+        });
+
+        await Fluttertoast.showToast(
+          msg: "The tasks has been uploaded",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.grey,
+          fontSize: 18.0,
+        );
+        _jobTitleController.clear();
+        _jobDescriptionController.clear();
+        setState(() {
+          _jobCategoryController.text = "Select Job Category";
+          _jobDeadlineController.text = "Job Deadline Date";
+        });
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -260,7 +341,9 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
                       child: isLoading
                           ? const CircularProgressIndicator()
                           : MaterialButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _uploadTask();
+                              },
                               color: Colors.black54,
                               elevation: 5,
                               shape: RoundedRectangleBorder(

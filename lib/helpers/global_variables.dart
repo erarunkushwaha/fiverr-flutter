@@ -3,3 +3,7 @@ String loginImageUrl =
 // https://images.unsplash.com/photo-1514971126075-758e7d825812?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=773&q=80
 
 String cborder = "Border.all(width: 2.0, color: const Color(0xFFFFFFFF))";
+
+String? name = "";
+String? userImage = "";
+String? location = "";
