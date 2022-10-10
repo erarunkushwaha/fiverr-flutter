@@ -1,0 +1,31 @@
+class Persistent {
+  static List<String> jobCategoryList = [
+    'Construction',
+    'Education and Tranning',
+    'Human Resources',
+    'Public Relations',
+    'International Business',
+    'Sales',
+    'Market Research',
+    'Marketing',
+    'Customer Service',
+    'Hospitality',
+    'Maintenance',
+    'Manufacturing',
+    'Information Technology (IT)',
+    'Healthcare/Medical',
+    'Graphic Designer',
+    'Marketing Communications',
+    'Content Marketing ',
+    'Copywriter',
+    'Digital Marketing Manager',
+    'Administrative Assistant',
+    'Business Analyst',
+    'Office Assistant',
+    'Secretary',
+    'Receptionist',
+    'Program Manager',
+    'Administrative Analyst',
+    'Data Entry'
+  ];
+}
