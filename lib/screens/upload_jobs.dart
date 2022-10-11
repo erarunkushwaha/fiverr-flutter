@@ -120,6 +120,7 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
             ),
             content: SizedBox(
               width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.60,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: Persistent.jobCategoryList.length,
@@ -246,6 +247,25 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
         });
       }
     }
+  }
+
+  void getMyData() async {
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    setState(() {
+      name = userDoc.get("name");
+      userImage = userDoc.get("userImage");
+      location = userDoc.get("location");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getMyData();
   }
 
   @override

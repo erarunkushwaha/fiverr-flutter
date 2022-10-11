@@ -1,5 +1,11 @@
+import 'dart:ui';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fiverr/helpers/persistent.dart';
+import 'package:fiverr/screens/search_job.dart';
+import 'package:fiverr/screens/search_screen.dart';
 import 'package:fiverr/widgets/bottom_nav_bar.dart';
+import 'package:fiverr/widgets/job_widget.dart';
 import 'package:flutter/material.dart';
 
 class JobsScreen extends StatefulWidget {
@@ -34,6 +40,7 @@ class _JobsScreenState extends State<JobsScreen> {
               ),
             ),
             content: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.60,
               width: MediaQuery.of(context).size.width,
               child: ListView.builder(
                 shrinkWrap: true,
@@ -130,6 +137,7 @@ class _JobsScreenState extends State<JobsScreen> {
             ),
           ),
           title: const Text("Jobs Screen"),
+          automaticallyImplyLeading: false,
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(
@@ -139,6 +147,66 @@ class _JobsScreenState extends State<JobsScreen> {
             ),
             onPressed: showTaskCategoryDialog,
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.search_outlined,
+                color: Colors.white,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (c) => const SearchJobScreen()));
+              },
+            ),
+          ],
+        ),
+        body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: FirebaseFirestore.instance
+              .collection("jobs")
+              .where("jobCategory", isEqualTo: jobCategoryFilter)
+              .where("recruitment", isEqualTo: true)
+              .orderBy("createdAt", descending: false)
+              .snapshots(),
+          builder: (context, AsyncSnapshot shapshot) {
+            if (shapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (shapshot.connectionState == ConnectionState.active) {
+              if (shapshot.data?.docs.isNotEmpty == true) {
+                return ListView.builder(
+                  itemCount: shapshot.data?.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return JobWidget(
+                      jobTitle: shapshot.data?.docs[index]['jobTitle'],
+                      jobDescription: shapshot.data?.docs[index]
+                          ['jobDescription'],
+                      jobId: shapshot.data?.docs[index]['jobId'],
+                      uploadedBy: shapshot.data?.docs[index]['uploadedBy'],
+                      userImage: shapshot.data?.docs[index]['userImage'],
+                      name: shapshot.data?.docs[index]['name'],
+                      recruitment: shapshot.data?.docs[index]['recruitment'],
+                      email: shapshot.data?.docs[index]['email'],
+                      location: shapshot.data?.docs[index]['location'],
+                    );
+                  },
+                );
+              }
+            } else {
+              return const Center(child: Text("There is no jobs"));
+            }
+            return const Center(
+              child: Text(
+                "Soething Went Wrong",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
