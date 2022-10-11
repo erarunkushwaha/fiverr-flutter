@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fiverr/helpers/global_method.dart';
+import 'package:fiverr/screens/job_details.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -90,11 +91,17 @@ class _JobWidgetState extends State<JobWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white24,
+      color: Colors.black12,
       elevation: 8,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: ListTile(
-        onTap: () {},
+        onTap: () {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => JobDetailScreen(
+                      uploadedBy: widget.uploadedBy, jobId: widget.jobId)));
+        },
         onLongPress: _deleteDialog,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
