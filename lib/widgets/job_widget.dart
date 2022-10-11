@@ -1,4 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fiverr/helpers/global_method.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class JobWidget extends StatefulWidget {
   final String jobTitle;
@@ -28,6 +34,59 @@ class JobWidget extends StatefulWidget {
 }
 
 class _JobWidgetState extends State<JobWidget> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  _deleteDialog() {
+    User? user = _auth.currentUser;
+    final uid = user!.uid;
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              TextButton(
+                  onPressed: () async {
+                    try {
+                      if (widget.uploadedBy == uid) {
+                        await FirebaseFirestore.instance
+                            .collection('jobs')
+                            .doc(widget.jobId)
+                            .delete();
+
+                        await Fluttertoast.showToast(
+                            msg: "Job has been deleted",
+                            toastLength: Toast.LENGTH_LONG,
+                            backgroundColor: Colors.grey,
+                            fontSize: 18.0);
+                        Navigator.canPop(context)
+                            ? Navigator.pop(context)
+                            : null;
+                      } else {
+                        GlobalMethod.showErrorDialog(
+                            error: "You cannot perform action on this job",
+                            ctx: context);
+                      }
+                    } catch (e) {
+                      GlobalMethod.showErrorDialog(
+                          error: "This jobs cannot be deleted at this moment",
+                          ctx: context);
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.delete, color: Colors.red),
+                      Text(
+                        "Delete",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  )),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -36,7 +95,7 @@ class _JobWidgetState extends State<JobWidget> {
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: ListTile(
         onTap: () {},
-        onLongPress: () {},
+        onLongPress: _deleteDialog,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         leading: Container(
