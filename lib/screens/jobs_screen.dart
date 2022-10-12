@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fiverr/helpers/persistent.dart';
 import 'package:fiverr/screens/search_job.dart';
-import 'package:fiverr/screens/search_screen.dart';
 import 'package:fiverr/widgets/bottom_nav_bar.dart';
 import 'package:fiverr/widgets/job_widget.dart';
 import 'package:flutter/material.dart';

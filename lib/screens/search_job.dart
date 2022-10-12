@@ -42,19 +42,19 @@ class _SearchJobScreenState extends State<SearchJobScreen> {
           title: const Text("Search Jobs Screen"),
           centerTitle: true,
           // automaticallyImplyLeading: false,
-          actions: [
-            // IconButton(
-            //   icon: const Icon(
-            //     Icons.search_outlined,
-            //     color: Colors.white,
-            //     size: 30,
-            //   ),
-            //   onPressed: () {
-            //     Navigator.pushReplacement(context,
-            //         MaterialPageRoute(builder: (c) => const SearchJobScreen()));
-            //   },
-            // ),
-          ],
+          // actions: [
+          //   // IconButton(
+          //   //   icon: const Icon(
+          //   //     Icons.search_outlined,
+          //   //     color: Colors.white,
+          //   //     size: 30,
+          //   //   ),
+          //   //   onPressed: () {
+          //   //     Navigator.pushReplacement(context,
+          //   //         MaterialPageRoute(builder: (c) => const SearchJobScreen()));
+          //   //   },
+          //   // ),
+          // ],
         ),
       ),
     );
