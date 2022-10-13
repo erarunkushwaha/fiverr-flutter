@@ -3,9 +3,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fiverr/helpers/global_method.dart';
+import 'package:fiverr/helpers/global_variables.dart';
 import 'package:fiverr/screens/jobs_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:uuid/uuid.dart';
 
 class JobDetailScreen extends StatefulWidget {
   final String uploadedBy;
@@ -38,6 +41,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   String? emailCompany;
   int? applicants = 0;
   bool isDeadLineAvialable = false;
+  bool showComment = false;
 
   void getJobData() async {
     final DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -521,9 +525,116 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                         ),
                                       ),
                                     ),
+                                    Flexible(
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: MaterialButton(
+                                              onPressed: () async {
+                                                if (_commentController
+                                                        .text.length <
+                                                    7) {
+                                                  GlobalMethod.showErrorDialog(
+                                                      error:
+                                                          "Comment cannot be less than 7 character",
+                                                      ctx: context);
+                                                } else {
+                                                  final generatedId =
+                                                      const Uuid().v4();
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection("jobs")
+                                                      .doc(widget.jobId)
+                                                      .update({
+                                                    "jobComments":
+                                                        FieldValue.arrayUnion([
+                                                      {
+                                                        "userId": FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid,
+                                                        "commentId":
+                                                            generatedId,
+                                                        "name": name,
+                                                        "userImageUrl":
+                                                            userImage,
+                                                        "commentBoxy":
+                                                            _commentController
+                                                                .text,
+                                                        'time': Timestamp.now(),
+                                                      }
+                                                    ]),
+                                                  });
+
+                                                  await Fluttertoast.showToast(
+                                                    msg:
+                                                        "Your Comment has been added",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    backgroundColor:
+                                                        Colors.grey,
+                                                    fontSize: 18,
+                                                  );
+                                                  _commentController.clear();
+                                                }
+                                                setState(() {
+                                                  showComment = true;
+                                                });
+                                              },
+                                              color: Colors.blueAccent,
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Text(
+                                                "Post",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  _isCommenting =
+                                                      !_isCommenting;
+                                                  showComment = false;
+                                                });
+                                              },
+                                              child: const Text("Cancel"))
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 )
-                              : Row(),
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.add_comment,
+                                        color: Colors.green.shade300,
+                                        size: 40,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 20),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.arrow_drop_down_circle,
+                                        color: Colors.green.shade300,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ],
                     ),
