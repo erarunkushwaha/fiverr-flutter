@@ -510,18 +510,15 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                         maxLength: 200,
                                         keyboardType: TextInputType.text,
                                         maxLines: 6,
-                                        decoration: InputDecoration(
+                                        decoration: const InputDecoration(
                                           filled: true,
-                                          fillColor: Theme.of(context)
-                                              .scaffoldBackgroundColor,
-                                          enabledBorder:
-                                              const UnderlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.white)),
-                                          focusedBorder:
-                                              const UnderlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.white)),
+                                          fillColor: Colors.black26,
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white)),
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white)),
                                         ),
                                       ),
                                     ),
@@ -583,7 +580,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                                   showComment = true;
                                                 });
                                               },
-                                              color: Colors.blueAccent,
+                                              color: Colors.green.shade300,
                                               elevation: 0,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -607,7 +604,13 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                                   showComment = false;
                                                 });
                                               },
-                                              child: const Text("Cancel"))
+                                              child: const Text(
+                                                "Cancel",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 18,
+                                                ),
+                                              ))
                                         ],
                                       ),
                                     ),
@@ -617,7 +620,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        setState(() {
+                                          _isCommenting = !_isCommenting;
+                                        });
+                                      },
                                       icon: Icon(
                                         Icons.add_comment,
                                         color: Colors.green.shade300,
@@ -626,7 +633,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                     ),
                                     const SizedBox(width: 20),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        setState(() {
+                                          showComment = false;
+                                        });
+                                      },
                                       icon: Icon(
                                         Icons.arrow_drop_down_circle,
                                         color: Colors.green.shade300,

@@ -103,6 +103,13 @@ class _JobsScreenState extends State<JobsScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Persistent persistentObject = Persistent();
+    persistentObject.getMyData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
