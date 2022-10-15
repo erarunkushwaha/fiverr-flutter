@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fiverr/helpers/global_method.dart';
 import 'package:fiverr/helpers/global_variables.dart';
 import 'package:fiverr/screens/jobs_screen.dart';
+import 'package:fiverr/widgets/comment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -557,7 +558,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                                         "name": name,
                                                         "userImageUrl":
                                                             userImage,
-                                                        "commentBoxy":
+                                                        "commentBody":
                                                             _commentController
                                                                 .text,
                                                         'time': Timestamp.now(),
@@ -635,7 +636,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                     IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          showComment = false;
+                                          showComment = true;
                                         });
                                       },
                                       icon: Icon(
@@ -647,6 +648,64 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                   ],
                                 ),
                         ),
+                        showComment == false
+                            ? Container()
+                            : Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: FutureBuilder<DocumentSnapshot>(
+                                  future: FirebaseFirestore.instance
+                                      .collection("jobs")
+                                      .doc(widget.jobId)
+                                      .get(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      if (snapshot.data == null) {
+                                        const Center(
+                                          child:
+                                              Text("No comment for this jobid"),
+                                        );
+                                      }
+                                    }
+                                    return ListView.separated(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return CommentWidget(
+                                          commentId:
+                                              snapshot.data!['jobComments']
+                                                  [index]['commentId'],
+                                          commenterId:
+                                              snapshot.data!['jobComments']
+                                                  [index]['userId'],
+                                          commenterName:
+                                              snapshot.data!['jobComments']
+                                                  [index]['name'],
+                                          commenterBody:
+                                              snapshot.data!['jobComments']
+                                                  [index]['commentBody'],
+                                          commenterImageUrl:
+                                              snapshot.data!['jobComments']
+                                                  [index]['userImageUrl'],
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return Divider(
+                                          thickness: 1,
+                                          color: Colors.grey.shade300,
+                                        );
+                                      },
+                                      itemCount:
+                                          snapshot.data!['jobComments'].length,
+                                    );
+                                  },
+                                ),
+                              ),
                       ],
                     ),
                   ),
