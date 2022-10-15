@@ -120,6 +120,7 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
             ),
             content: SizedBox(
               width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.60,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: Persistent.jobCategoryList.length,
@@ -247,6 +248,12 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
       }
     }
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getMyData();
+  // }
 
   @override
   Widget build(BuildContext context) {
