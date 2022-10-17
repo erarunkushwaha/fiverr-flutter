@@ -11,7 +11,8 @@ class Persistent {
 
     name = userDoc.get("name");
     userImage = userDoc.get("userImage");
-    location = userDoc.get("location");
+
+    location = userDoc.get("address");
   }
 
   static List<String> jobCategoryList = [

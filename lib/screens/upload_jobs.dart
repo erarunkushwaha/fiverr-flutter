@@ -261,7 +261,7 @@ class _UploadJobsScreenState extends State<UploadJobsScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.green[200]!,
+            Colors.green[100]!,
             Colors.greenAccent[200]!,
           ],
           begin: Alignment.centerLeft,
