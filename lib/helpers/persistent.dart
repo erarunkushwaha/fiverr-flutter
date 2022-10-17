@@ -10,12 +10,9 @@ class Persistent {
         .get();
 
     name = userDoc.get("name");
-    print("name $name");
     userImage = userDoc.get("userImage");
-    print("userImage $userImage");
 
     location = userDoc.get("address");
-    print("location $location");
   }
 
   static List<String> jobCategoryList = [
