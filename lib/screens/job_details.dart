@@ -1,4 +1,4 @@
- // ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,8 +79,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         var postDate = postedDateTimestamp!.toDate();
         postedDate = "${postDate.year} -  ${postDate.month} - ${postDate.day}";
       });
-      // var date = deadlineDateTimestamp!.toDate();
-      // isDeadLineAvialable = date.isAfter(DateTime.now());
+      var date = deadlineDateTimestamp!.toDate();
+      isDeadLineAvialable = date.isAfter(DateTime.now());
     }
   }
 

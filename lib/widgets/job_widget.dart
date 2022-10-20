@@ -116,17 +116,19 @@ class _JobWidgetState extends State<JobWidget> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Colors.white,
-                ),
-                borderRadius: BorderRadius.circular(10)),
+              border: Border.all(
+                width: 2,
+                color: Colors.white,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  widget.userImage,
-                  fit: BoxFit.cover,
-                )),
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                widget.userImage,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
         title: Text(
