@@ -3,7 +3,7 @@
 
 <p align="left"> <img src="https://komarev.com/ghpvc/?username=erarunkushwaha&label=Profile%20views&color=0e75b6&style=flat" alt="erarunkushwaha" /> </p>
 
-- 🔭 I’m currently worki ng on **The Agile Academy**
+- 🔭 I’m currently working on **The Agile Academy**
 
 - 🌱 I’m currently learning **Flutter**
 
